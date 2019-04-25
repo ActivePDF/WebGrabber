@@ -65,7 +65,7 @@ oWG.PrintBackground = true
 ' Examples:
 ' http://domain.com/path/file.aspx
 ' file:///c:/folder/file.html
-oWG.URL = "file:///" & strPath & "ActivePDFImageExample.html"
+oWG.URL = "http://samples.activepdf.com/webgrabber/images/ActivePDFImageExample.html"
 
 ' Perform the HTML to PDF conversion
 Set results = oWG.ConvertToPDF("127.0.0.1", 62625)

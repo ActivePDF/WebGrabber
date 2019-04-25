@@ -30,7 +30,7 @@ namespace WebGrabberExamples
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = $"file:///{strPath}ActivePDFExamples.html";
+            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // With OverwriteMethod set to Always an existing PDF with the same
             // name will be overridden.

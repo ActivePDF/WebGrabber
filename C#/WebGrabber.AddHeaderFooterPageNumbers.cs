@@ -43,7 +43,7 @@ namespace WebGrabberExamples
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = $"file:///{strPath}ActivePDFExamples.html";
+            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // Perform the HTML to PDF conversion
             WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();

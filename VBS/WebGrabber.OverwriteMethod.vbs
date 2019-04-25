@@ -24,7 +24,7 @@ oWG.OutputDirectory = strPath
 ' Examples:
 ' http://domain.com/path/file.aspx
 ' file:///c:/folder/file.html
-oWG.URL = "file:///" & strPath & "ActivePDFExamples.html"
+oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html"
 
 ' The below code will perform three conversions to demonstrate OverwriteMethod
 

@@ -37,7 +37,7 @@ oWG.PreserveTextBoxes = True
 ' Examples:
 ' http://domain.com/path/file.aspx
 ' file:///c:/folder/file.html
-oWG.URL = "file:///" & strPath & "ActivePDFFormFields.html"
+oWG.URL = "http://samples.activepdf.com/webgrabber/FormFields/ActivePDFFormFields.html"
 
 ' Perform the HTML to PDF conversion
 Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
