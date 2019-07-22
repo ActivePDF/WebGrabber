@@ -16,61 +16,65 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.AddTextStamp.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.AddTextStamp.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // Stamp Images and Text onto the output PDF
-            oWG.AddStampCollection("TXTinternal");
-            oWG.StampFont = "Helvetica";
-            oWG.StampFontSize = 108;
-            oWG.StampFontTransparency = 0.1f;
-            oWG.StampRotation = 45.0f;
-            oWG.StampFillMode = ADK.PDF.FontFillMode.FillThenStroke;
-            oWG.StampColorNET = new ADK.PDF.Color() { Red = 255, Green = 0, Blue = 0, Gray = 0 };
-            oWG.StampStrokeColorNET = new ADK.PDF.Color() { Red = 100, Green = 0, Blue = 0, Gray = 0 };
-            oWG.AddStampText(116.0f, 156.0f, "Internal Only");
+            webgrabber.AddStampCollection("TXTinternal");
+            webgrabber.StampFont = "Helvetica";
+            webgrabber.StampFontSize = 108;
+            webgrabber.StampFontTransparency = 0.1f;
+            webgrabber.StampRotation = 45.0f;
+            webgrabber.StampFillMode = ADK.PDF.FontFillMode.FillThenStroke;
+            webgrabber.StampColorNET = new ADK.PDF.Color() { Red = 255, Green = 0, Blue = 0, Gray = 0 };
+            webgrabber.StampStrokeColorNET = new ADK.PDF.Color() { Red = 100, Green = 0, Blue = 0, Gray = 0 };
+            webgrabber.AddStampText(116.0f, 156.0f, "Internal Only");
 
             // Set whether the stamp collection(s) appears in the background or foreground
-            oWG.StampBackground = 0;
+            webgrabber.StampBackground = 0;
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
+            webgrabber.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // Perform the HTML to PDF conversion
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

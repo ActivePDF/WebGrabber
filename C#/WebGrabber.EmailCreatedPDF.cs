@@ -16,73 +16,77 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.EmailCreated.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.EmailCreated.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // Add an email
-            oWG.AddEMail();
+            webgrabber.AddEMail();
 
             // Set server information
-            oWG.SetSMTPInfo("#.#.#.#", 25);
-            oWG.SetSMTPCredentials("credentials.ame", "Domain", "password");
+            webgrabber.SetSMTPInfo("#.#.#.#", 25);
+            webgrabber.SetSMTPCredentials("credentials.ame", "Domain", "password");
 
             // Set email addresses
-            oWG.SetSenderInfo("Sender Name", "sender.email@asdidlwenra.com");
-            oWG.SetReplyToInfo("ReplyTo Name", "replyto.name@asdidlwenra.com");
-            oWG.SetRecipientInfo("Recipient Name", "recipient.name@asdidlwenra.com");
-            oWG.AddToCC("CC Name", "cc.name@asdidlwenra.com");
-            oWG.AddToBcc("BCC Name", "bcc.name@asdidlwenra.com");
+            webgrabber.SetSenderInfo("Sender Name", "sender.email@asdidlwenra.com");
+            webgrabber.SetReplyToInfo("ReplyTo Name", "replyto.name@asdidlwenra.com");
+            webgrabber.SetRecipientInfo("Recipient Name", "recipient.name@asdidlwenra.com");
+            webgrabber.AddToCC("CC Name", "cc.name@asdidlwenra.com");
+            webgrabber.AddToBcc("BCC Name", "bcc.name@asdidlwenra.com");
 
             // Subject and Body
-            oWG.EMailSubject = "PDF Delivery from activePDF";
-            oWG.SetEMailBody("<html><body style='background-color: #EEE; padding: 4px;'>Here is your PDF!</body></html>", true);
+            webgrabber.EMailSubject = "PDF Delivery from activePDF";
+            webgrabber.SetEMailBody("<html><body style='background-color: #EEE; padding: 4px;'>Here is your PDF!</body></html>", true);
 
             // Attachments - Binary attachments can be added with AddEMailBinaryAttachment
-            oWG.AddEMailAttachment(strPath + "x.pdf");
+            webgrabber.AddEMailAttachment(strPath + "x.pdf");
 
             // Other email options
-            oWG.EMailReadReceipt = false;
-            oWG.EMailAttachOutput = true;
+            webgrabber.EMailReadReceipt = false;
+            webgrabber.EMailAttachOutput = true;
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
+            webgrabber.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // Perform the HTML to PDF conversion
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

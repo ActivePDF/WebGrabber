@@ -16,60 +16,66 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory;
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Adding page numbers simply requires using %cp% in the footer
             // or header HTML, %tp% will translate to the total pages.
-            oWG.FooterHeight = 0.5f;
-            oWG.FooterHTML = "Page %cp% of %tp%";
+            webgrabber.FooterHeight = 0.5f;
+            webgrabber.FooterHTML = "Page %cp% of %tp%";
 
-            // Enable extra logging (logging should only be used while troubleshooting)
+            // Enable extra logging (logging should only be used while
+            // troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // Rendering engine used for the HTML
             // 0 = Native, 1 = IE
-            oWG.EngineToUse = APWebGrabberInterface.ConversionEngine.Native;
+            webgrabber.EngineToUse =
+                APWebGrabberInterface.ConversionEngine.Native;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.AddPageNumbers.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.AddPageNumbers.pdf";
+            webgrabber.OutputDirectory = strPath;
 
-            // Start page and total page numbers can be set with SetPageNbrParams
-            // but are not required. (Native engine only)
-            oWG.SetPageNbrParams(4, 8);
+            // Start page and total page numbers can be set with
+            // SetPageNbrParams but are not required. (Native engine only)
+            webgrabber.SetPageNbrParams(4, 8);
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
+            webgrabber.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // Perform the HTML to PDF conversion
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

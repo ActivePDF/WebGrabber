@@ -16,52 +16,56 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.SetSecurity.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.SetSecurity.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // Set 40-bit encryption on PDF output
             // A blank user password will allow the PDF to open without a password
             // (WebGrabber also supports 128- and AES 256-bit encryption.)
-            oWG.SetPDFSecurity("userpass", "ownerpass", true, true, true, true);
+            webgrabber.SetPDFSecurity("userpass", "ownerpass", true, true, true, true);
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
+            webgrabber.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // Perform the HTML to PDF conversion
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

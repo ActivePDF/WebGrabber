@@ -16,50 +16,54 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Stores strings from CreateFromHTMLText to a file, useful when
             // createing very large HTML files.
-            //oWG.HTMLTextToFile = true;
+            //webgrabber.HTMLTextToFile = true;
 
             // HTML to convert
-            oWG.CreateFromHTMLText = "<html><body>";
-            oWG.CreateFromHTMLText = "Hello World!";
-            oWG.CreateFromHTMLText = "</body></html>";
+            webgrabber.CreateFromHTMLText = "<html><body>";
+            webgrabber.CreateFromHTMLText = "Hello World!";
+            webgrabber.CreateFromHTMLText = "</body></html>";
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.CreateFromHTMLText.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.CreateFromHTMLText.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // Perform the HTML to PDF conversion
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

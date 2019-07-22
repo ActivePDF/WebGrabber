@@ -16,75 +16,79 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.OverwriteMethod.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.OverwriteMethod.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
+            webgrabber.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html";
 
             // With OverwriteMethod set to Always an existing PDF with the same
             // name will be overridden.
-            oWG.OverwriteMethod = ADK.Conversion.OverwriteMethod.Always;
-            WebGrabberDK.Results.WebGrabberResult result = oWG.ConvertToPDF();
+            webgrabber.OverwriteMethod = ADK.Conversion.OverwriteMethod.Always;
+            WebGrabberDK.Results.WebGrabberResult result = webgrabber.ConvertToPDF();
             if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                ErrorHandler(result);
+                WriteResult(result);
             }
 
             // With OverwriteMethod set to Never if a PDF with the same
             // name exists the ConvertToPDF function will return an error.
             // This should return an error since the previous call to 
             // ConvertToPDF should have created an OverwriteMethod.pdf
-            oWG.OverwriteMethod = ADK.Conversion.OverwriteMethod.Never;
-            result = oWG.ConvertToPDF();
+            webgrabber.OverwriteMethod = ADK.Conversion.OverwriteMethod.Never;
+            result = webgrabber.ConvertToPDF();
+            Console.WriteLine($"Overwrite Never Result: {result.WebGrabberStatus}");
 
             // With OverwriteMethod set to AlterFilename if an existing PDF
             // with the same exists the output file name will be incremented.
-            oWG.OverwriteMethod = ADK.Conversion.OverwriteMethod.AlterFilename;
-            result = oWG.ConvertToPDF();
+            webgrabber.OverwriteMethod = ADK.Conversion.OverwriteMethod.AlterFilename;
+            result = webgrabber.ConvertToPDF();
             if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                ErrorHandler(result);
+                WriteResult(result);
             }
 
             // With OverwriteMethod set to Concatenate if an existing PDF
             // with the same exists the output file will be appeneded to the
             // original file.
-            oWG.OverwriteMethod = ADK.Conversion.OverwriteMethod.Concatenate;
-            result = oWG.ConvertToPDF();
-            if (result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler(result);
-            }
+            webgrabber.OverwriteMethod = ADK.Conversion.OverwriteMethod.Concatenate;
+            result = webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }

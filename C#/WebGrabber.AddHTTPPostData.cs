@@ -16,59 +16,63 @@ namespace WebGrabberExamples
             string strPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace('\\', '/');
 
             // Instantiate Object
-            APWebGrabber.WebGrabber oWG = new APWebGrabber.WebGrabber();
+            APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Rendering engine used for the HTML
             // 0 = Native, 1 = IE
-            oWG.EngineToUse = APWebGrabberInterface.ConversionEngine.Native;
+            webgrabber.EngineToUse = APWebGrabberInterface.ConversionEngine.Native;
 
             // Send HTTP post data to the URL
-            oWG.AddHTTPPostData("input_name_first=John");
-            oWG.AddHTTPPostData("input_name_last=Johnson");
-            oWG.AddHTTPPostData("input_email=john.johnson@fakedomain.com");
-            oWG.AddHTTPPostData("radio_gender=male");
+            webgrabber.AddHTTPPostData("input_name_first=John");
+            webgrabber.AddHTTPPostData("input_name_last=Johnson");
+            webgrabber.AddHTTPPostData("input_email=john.johnson@fakedomain.com");
+            webgrabber.AddHTTPPostData("radio_gender=male");
 
             // Enable extra logging (logging should only be used while troubleshooting)
             // C:\ProgramData\activePDF\Logs\
-            oWG.Debug = true;
+            webgrabber.Debug = true;
 
             // PDF output location and filename
-            oWG.NewDocumentName = "WebGrabber.AddHTTPPostData.pdf";
-            oWG.OutputDirectory = strPath;
+            webgrabber.NewDocumentName = "WebGrabber.AddHTTPPostData.pdf";
+            webgrabber.OutputDirectory = strPath;
 
             // HTML to convert
             // Examples:
             // http://domain.com/path/file.aspx
             // file:///c:/folder/file.html
-            oWG.URL = "http://localhost/AddHTTPPostData.asp";
+            webgrabber.URL = "http://localhost/AddHTTPPostData.asp";
 
-            // Perform the HTML to PDF conversion - You need IIS installed to test
-            // post data and the URL below expects the ASP page to be located in
-            // the default website. "C:\inetpub\wwwroot"
-            WebGrabberDK.Results.WebGrabberResult results = oWG.ConvertToPDF();
-            if (results.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
-            {
-                ErrorHandler("ConvertToPDF", results, results.WebGrabberStatus.ToString());
-            }
+            // Perform the HTML to PDF conversion - You need IIS installed to
+            // test post data and the URL below expects the ASP page to be
+            // located in the default website. "C:\inetpub\wwwroot"
+            WebGrabberDK.Results.WebGrabberResult result =
+                webgrabber.ConvertToPDF();
 
-            // Release Object
-            oWG = null;
+            // Output result
+            WriteResult(result);
 
             // Process Complete
             Console.WriteLine("Done!");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey();
         }
 
-        // Error Handling
-        public static void ErrorHandler(WebGrabberDK.Results.WebGrabberResult Result)
+        public static void WriteResult(WebGrabberDK.Results.WebGrabberResult Result)
         {
-            Console.WriteLine($"Error with {Result.Origin.Class}.{Result.Origin.Function}");
-            Console.WriteLine($"Error Status: {Result.WebGrabberStatus}");
-            Console.WriteLine($"Error Details: {Result.Details}");
-            if (Result.ResultException != null)
+            Console.WriteLine($"WebGrabber Status: {Result.WebGrabberStatus}");
+            if (Result.WebGrabberStatus != WebGrabberDK.Results.WebGrabberStatus.Success)
             {
-                Console.WriteLine("Exception caught during conversion.");
-                Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
-                Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                Console.WriteLine($"Result Origin: {Result.Origin.Class}.{Result.Origin.Function}");
+                if (!String.IsNullOrEmpty(Result.Details))
+                {
+                    Console.WriteLine($"Result Details: {Result.Details}");
+                }
+                if (Result.ResultException != null)
+                {
+                    Console.WriteLine("Exception caught during conversion.");
+                    Console.WriteLine($"Excpetion Details: {Result.ResultException.Message}");
+                    Console.WriteLine($"Exception Stack Trace: {Result.ResultException.StackTrace}");
+                }
             }
         }
     }
