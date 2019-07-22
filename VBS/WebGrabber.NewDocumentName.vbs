@@ -31,24 +31,23 @@ oWG.OutputDirectory = strPath
 oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html"
 
 ' Perform the HTML to PDF conversion
-Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
-If results.WebGrabberStatus <> 0 Then
-  ErrorHandler "ConvertToPDF", results, results.WebGrabberStatus
-End If
+Set result = oWG.ConvertToPDF("127.0.0.1", 62625)
 
 ' Retrieve the randomly generated NewDocumentName
-MsgBox "NewDocumentName: " & oWG.NewDocumentName
-		
-' Release Object
-Set oWG = Nothing
+Wscript.Echo "NewDocumentName: " & oWG.NewDocumentName	
+
+' Output conversion result
+WriteResult result
 
 ' Process Complete
-Wscript.Echo("Done!")
+Wscript.Quit
 
-' Error Handling
-Sub ErrorHandler(method, oResult, errorStatus)
-  Wscript.Echo("Error with " & method & ": " & vbcrlf _
-    & errorStatus & vbcrlf _
-    & oResult.details)
-  Wscript.Quit 1
+Sub WriteResult(oResult)
+  message = "Result Status: " & result.WebGrabberStatus
+  If result.WebGrabberStatus = 0 Then
+      message = message & ", Success!"
+  Else
+      message = message &", " & result.Details
+  End If
+  Wscript.Echo message
 End Sub

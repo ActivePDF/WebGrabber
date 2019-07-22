@@ -34,7 +34,7 @@ oWG.URL = "http://samples.activepdf.com/webgrabber/basic/ActivePDFExamples.html"
 oWG.OverwriteMethod = 0
 Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
 If results.WebGrabberStatus <> 0 Then
-  ErrorHandler "ConvertToPDF", results, results.WebGrabberStatus
+  WriteResult result
 End If
 
 ' With OverwriteMethod set to Never if a PDF with the same
@@ -49,29 +49,30 @@ Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
 oWG.OverwriteMethod = 3
 Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
 If results.WebGrabberStatus <> 0 Then
-  ErrorHandler "ConvertToPDF", results, results.WebGrabberStatus
+  WriteResult result
+  Wscript.Quit
 End If
 
 ' With OverwriteMethod set to Concatenate if an existing PDF
 ' with the same exists the output file will be appeneded to the
 ' original file.
 oWG.OverwriteMethod = 1
-Set results = oWG.ConvertToPDF("127.0.0.1", 62625)
-If results.WebGrabberStatus <> 0 Then
-  ErrorHandler "ConvertToPDF", results, results.WebGrabberStatus
-End If
-		
-		
-' Release Object
-Set oWG = Nothing
+
+' Perform the HTML to PDF conversion
+Set result = oWG.ConvertToPDF("127.0.0.1", 62625)
+
+' Output conversion result
+WriteResult result
 
 ' Process Complete
-Wscript.Echo("Done!")
+Wscript.Quit
 
-' Error Handling
-Sub ErrorHandler(method, oResult, errorStatus)
-  Wscript.Echo("Error with " & method & ": " & vbcrlf _
-    & errorStatus & vbcrlf _
-    & oResult.details)
-  Wscript.Quit 1
+Sub WriteResult(oResult)
+  message = "Result Status: " & result.WebGrabberStatus
+  If result.WebGrabberStatus = 0 Then
+      message = message & ", Success!"
+  Else
+      message = message &", " & result.Details
+  End If
+  Wscript.Echo message
 End Sub
