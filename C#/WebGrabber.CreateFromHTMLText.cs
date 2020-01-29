@@ -19,7 +19,7 @@ namespace WebGrabberExamples
             APWebGrabber.WebGrabber webgrabber = new APWebGrabber.WebGrabber();
 
             // Stores strings from CreateFromHTMLText to a file, useful when
-            // createing very large HTML files.
+            // creating very large HTML files.
             //webgrabber.HTMLTextToFile = true;
 
             // HTML to convert
